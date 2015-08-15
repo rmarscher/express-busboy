@@ -24,10 +24,13 @@ exports.extend = function(app, options) {
     app.use(busboy(options));
 
     app.use(function(req, res, next) {
-        req.body = {};
-        req.files = {};
+        var parseJson = options.json !== false ? true : false;
+        if (parseJson) {
+            req.files = {};
+            req.body = {};
+        }
 
-        if (req.is('json')) {
+        if (parseJson && req.is('json')) {
             jsonBody(req, res, options, function(err, body) {
                 req.body = body || {};
                 next();
@@ -36,6 +39,8 @@ exports.extend = function(app, options) {
             if (!req.busboy) { //Nothing to parse..
                 return next();
             }
+            req.files = {};
+            req.body = {};
             if (options.upload) {
                 req.busboy.on('file', function(name, file, filename, encoding, mimetype) {
                     var fileUuid = uuid.v4(),

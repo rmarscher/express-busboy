@@ -28,6 +28,19 @@ bb.extend(app, {
 });
 ```
 
+If you want to use the `body-parser` middleware for requests that aren't
+multipart file uploads, use the `json: false` option:
+
+```js
+var bodyParser = require('body-parser');
+app.use(bodyParser.urlencoded({ extended: true }));
+app.use(bodyParser.json({ type: ['application/json', 'application/*json'] }));
+bb.extend(app, {
+    json: false,
+    //busboy options can go here
+});
+```
+
 file uploads
 ------------
 
